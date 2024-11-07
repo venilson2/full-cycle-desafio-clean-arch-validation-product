@@ -1,5 +1,6 @@
 import Entity from "../../@sahred/entity/entity.abstract";
 import NotificationError from "../../notification/notification.error";
+import ProductValidatorFactory from "../factory/product.validator.factory";
 
 export default class Product extends Entity {
   private _name: string = "";
@@ -19,11 +20,6 @@ export default class Product extends Entity {
   }
 
   validate(){
-    if(this._id.length === 0){
-      this.notification.addError({context: "product", message: "Id is required"})
-    }
-    if(this._name.length === 0){
-      this.notification.addError({context: "product", message: "Name is required"})
-    }
+    ProductValidatorFactory.create().validate(this);
   }
 }
