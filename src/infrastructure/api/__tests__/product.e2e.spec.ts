@@ -46,4 +46,33 @@ describe('E2E test for product', ()=> {
     expect(response.body.products[0].name).toBe('Product 1')
     expect(response.body.products[1].name).toBe('Product 2')
   })
+
+  it('should list a product in XML', async () => {
+
+    const product1 = await request(app)
+    .post('/products')
+    .send({
+      name: 'Product 1',
+    })
+    expect(product1.status).toBe(200)
+
+    const product2 = await request(app)
+    .post('/products')
+    .send({
+      name: 'Product 2',
+    })
+    expect(product2.status).toBe(200)
+
+    const response = await request(app)
+    .get('/products')
+    .set("Accept", "application/xml")
+    .send()
+
+    expect(response.status).toBe(200)
+    expect(response.text).toContain(`<?xml version="1.0" encoding="UTF-8"?>`)
+    expect(response.text).toContain(`<products>`)
+    expect(response.text).toContain(`<product>`)
+    expect(response.text).toContain(`<name>Product 1</name>`)
+    expect(response.text).toContain(`<name>Product 2</name>`)
+  })
 })

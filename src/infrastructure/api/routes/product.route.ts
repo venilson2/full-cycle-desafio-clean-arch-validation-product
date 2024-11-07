@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express';
 import CreateProductUseCase from '../../../usecase/product/create/create.product.usecase';
 import ProductRepository from '../../product/product.repository';
 import ListProductUseCase from '../../../usecase/product/list/list.product.usecase';
+import ProductPresenter from '../presenters/product.presenter';
 
 export const productRoute = express.Router();
 
@@ -25,7 +26,12 @@ productRoute.get('/', async (req: Request, res: Response) => {
   try {
     const usecase = new ListProductUseCase(new ProductRepository());
     const output = await usecase.execute();
-    res.status(200).send(output)
+
+    res.format({
+      json: async () => res.send(output),
+      xml: async () => res.send(ProductPresenter.listXML(output)),
+    });
+
   } catch (error) {
     res.status(500).send(error)
   }
